@@ -1,20 +1,44 @@
+import java.util.*
+import kotlin.math.abs
+
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+
+    fun part1(input: List<String>): Long {
+        val list1 = mutableListOf<Int>()
+        val list2 = mutableListOf<Int>()
+        input.forEach { line ->
+            val nums = Scanner(line)
+            list1.add(nums.nextInt())
+            list2.add(nums.nextInt())
+        }
+        list1.sort()
+        list2.sort()
+        return list1.foldIndexed(0L) { index, acc, num1 ->
+            acc + abs(num1 - list2[index])
+        }
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part2(input: List<String>): Long {
+        val list1 = mutableListOf<Int>()
+        val list2 = mutableListOf<Int>()
+        input.forEach { line ->
+            val nums = Scanner(line)
+            list1.add(nums.nextInt())
+            list2.add(nums.nextInt())
+        }
+
+        val list2MapByCount = list2.groupingBy { it }.eachCount()
+        return list1.fold(0L) { acc, num1 ->
+            acc + num1 * list2MapByCount.getOrDefault(num1, 0)
+        }
     }
 
-    // Test if implementation meets criteria from the description, like:
-    check(part1(listOf("test_input")) == 1)
+    val testInput1 = readInput("Day01_test_part1")
+    check(part1(testInput1) == 11L)
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+    val testInput2 = readInput("Day01_test_part2")
+    check(part2(testInput2) == 31L)
 
-    // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day01")
     part1(input).println()
     part2(input).println()
