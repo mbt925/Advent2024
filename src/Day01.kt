@@ -33,11 +33,9 @@ fun main() {
         }
     }
 
-    val testInput1 = readInput("Day01_test_part1")
-    check(part1(testInput1) == 11L)
-
-    val testInput2 = readInput("Day01_test_part2")
-    check(part2(testInput2) == 31L)
+    val testInput = readInput("Day01_test")
+    check(part1(testInput) == 11L)
+    check(part2(testInput) == 31L)
 
     val input = readInput("Day01")
     part1(input).println()
