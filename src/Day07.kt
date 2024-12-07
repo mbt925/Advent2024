@@ -1,5 +1,4 @@
 import EquationOperator.*
-import kotlin.system.measureTimeMillis
 
 enum class EquationOperator {
     Sum, Mul, Concat;
@@ -75,8 +74,5 @@ fun main() {
 
     val input = readInput("Day07")
     part1(input).println()
-    val a = measureTimeMillis {
-        part2(input).println()
-    }
-    println("$a ms")
+    part2(input).println()
 }
