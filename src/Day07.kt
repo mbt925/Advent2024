@@ -1,4 +1,5 @@
 import EquationOperator.*
+import kotlin.system.measureTimeMillis
 
 enum class EquationOperator {
     Sum, Mul, Concat;
@@ -6,7 +7,18 @@ enum class EquationOperator {
     fun run(operand1: Long, operand2: Long) = when (this) {
         Sum -> operand1 + operand2
         Mul -> operand1 * operand2
-        Concat -> "$operand1$operand2".toLong()
+        Concat -> (operand1 * operand2.multiplier() + operand2)
+    }
+
+    // Calculate the multiplier (10^digits in b)
+    private fun Long.multiplier(): Long {
+        var temp = this
+        var multiplier = 1L
+        while (temp > 0) {
+            temp /= 10
+            multiplier *= 10
+        }
+        return multiplier
     }
 }
 
@@ -63,5 +75,8 @@ fun main() {
 
     val input = readInput("Day07")
     part1(input).println()
-    part2(input).println()
+    val a = measureTimeMillis {
+        part2(input).println()
+    }
+    println("$a ms")
 }
