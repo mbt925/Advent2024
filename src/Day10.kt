@@ -9,15 +9,6 @@ fun main() {
         fun isValid(size: Int) = row in 0..<size && col in 0..<size
     }
 
-    data class Point(
-        val height: Int,
-        val coord: Coord,
-    ) {
-
-        fun neighbors() = listOf(Up, Down, Left, Right).map { coord.move(it) }
-
-    }
-
     class HikingManager(
         val hill: Array<Array<Int>>,
     ) {
