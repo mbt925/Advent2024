@@ -2,7 +2,19 @@ import Direction.*
 
 enum class Direction(val x: Int, val y: Int) {
     Left(-1, 0), Right(1, 0), Up(0, -1), Down(0, 1),
-    RightDown(1, 1), RightUp(1, -1), LeftDown(-1, 1), LeftUp(-1, -1)
+    RightDown(1, 1), RightUp(1, -1), LeftDown(-1, 1), LeftUp(-1, -1);
+
+    fun inverse() = when(this) {
+        Left -> Right
+        Right -> Left
+        Up -> Down
+        Down -> Up
+        RightDown -> LeftUp
+        RightUp -> LeftDown
+        LeftDown -> RightUp
+        LeftUp -> RightDown
+    }
+    fun isVertical() = this == Up || this == Down
 }
 
 fun main() {
