@@ -2,7 +2,6 @@ import kotlin.math.pow
 
 fun main() {
 
-
     class ProgramExecutor(
         aStartValue: Long,
         val commands: List<Long>,
