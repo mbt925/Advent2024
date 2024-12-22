@@ -14,7 +14,7 @@ fun main() {
 
         fun bestSeqPrice(secrets: List<Int>, n: Int): Int {
             val mapOfSeqsWithMaxPrice = secrets.map { mapOfSeqsWithMaxPrice(it, n) }
-            val totalPriceMap = mutableMapOf<UInt, Int>()
+            val totalPriceMap = mutableMapOf<Int, Int>()
             mapOfSeqsWithMaxPrice.forEach {
                 it.entries.forEach { (seq, price) ->
                     totalPriceMap[seq] = totalPriceMap.getOrDefault(seq, 0) + price
@@ -23,18 +23,20 @@ fun main() {
             return totalPriceMap.maxOf { it.value }
         }
 
-        private fun mapOfSeqsWithMaxPrice(current: Int, n: Int): Map<UInt, Int> {
+        private fun mapOfSeqsWithMaxPrice(current: Int, n: Int): Map<Int, Int> {
             var counter = 0
             var secret = current.toLong()
-            var seq = 0u // 1 byte per diff. 4 bytes = Int
-            val map = mutableMapOf<UInt, Int>()
+            var seq = 0 // 1 byte per diff. 4 bytes = Int
+            val map = mutableMapOf<Int, Int>()
             while (counter < n) {
                 val newSecret = nextSecret(secret)
-                val diff = (((newSecret % 10) - (secret % 10)) and 0xFF).toUInt() // 0xFF only keeps the lower byte
+                val price = (secret % 10).toInt()
+                val newPrice = (newSecret % 10).toInt()
+                val diff = (newPrice - price) and 0xFF // 0xFF only keeps the lower byte
                 seq = seq shl 8
                 seq = seq or diff
                 if (counter >= 3) {
-                    map.putIfAbsent(seq, (newSecret % 10).toInt())
+                    map.putIfAbsent(seq, newPrice)
                 }
                 counter++
                 secret = newSecret
