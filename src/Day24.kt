@@ -51,40 +51,49 @@ fun main() {
                 .reversed().joinToString("").toLong(2)
         }
 
+        /*
+            Full adder: A + B
+            S = A XOR B XOR Ci (Carry-in)
+            Co = (A AND B) OR (Ci AND (A XOR B))
+         */
         fun findSwappedOutputs(): String {
             val lastZStr = "z%02d".format(lastZ)
-            // All gates producing z must use an XOR operation
-            // Identify gates that output z but not use XOR (except last gate)
-            val gatesNotUseXor = gates.keys.filter {
+            // All gates producing z must use XOR
+            // Set1: Identify gates that output z but not use XOR (except last gate)
+            val set1 = gates.keys.filter {
                 gates[it]!!.opr != Opr.XOR && it.startsWith('z') && it != lastZStr
             }
 
-            // XOR must only be applied to inputs or outputs, not for intermediate calculations
-            val gatesUseXorForIntermediateCalc = gates.keys.filter {
+            // Set2: XOR must only be applied to inputs or outputs, not for intermediate calculations
+            val set2 = gates.keys.filter {
                 val gate = gates[it]!!
                 gate.opr == Opr.XOR && !gate.hasInputXY() && it.first() != 'z'
             }
 
             val mutableGates = gates.toMutableMap()
-            for (first in gatesUseXorForIntermediateCalc) {
-                val second = gatesNotUseXor.first { it == mutableGates.firstZThatUsesC(first) }
-                val temp = mutableGates[first]!!
-                mutableGates[first] = mutableGates[second]!!
-                mutableGates[second] = temp
+            // Each item from Set1 must be swapped with an item from Set2
+            // Find the corresponding Z in Set1 for each item in Set2
+            for (i2 in set2) {
+                val i1 = set1.first { it == mutableGates.firstZThatUsesC(i2) }
+                // swap the found pair to fix the output
+                val temp = mutableGates[i2]!!
+                mutableGates[i2] = mutableGates[i1]!!
+                mutableGates[i1] = temp
             }
 
             // x + y must match z
             // Bits that don't match must be swapped
-            // Find first 1 in the xor
-            val firstFalseMatch = (getWiresAsLong('x') + getWiresAsLong('y') xor run(mutableGates))
+            // Find the first ONE in the xor as there is only one mismatch
+            val firstDiff = (getWiresAsLong('x') + getWiresAsLong('y') xor run(mutableGates))
                 .countTrailingZeroBits()
                 .toString()
+
+            // Find the gates that input x0[firstDiff] and y0[firstDiff]
             val falseMatches = mutableGates.filter {
-                it.value.input1.endsWith(firstFalseMatch) && it.value.input2.endsWith(firstFalseMatch)
+                it.value.input1.endsWith(firstDiff) && it.value.input2.endsWith(firstDiff)
             }.keys
 
-            return (gatesNotUseXor + gatesUseXorForIntermediateCalc + falseMatches)
-                .sorted().joinToString(",")
+            return (set1 + set2 + falseMatches).sorted().joinToString(",")
         }
 
         private fun getWiresAsLong(type: Char) =
